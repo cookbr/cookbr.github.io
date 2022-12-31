@@ -2,7 +2,7 @@ name: Deploy 11ty Site to GitHub Pages
 
 on:
   push:
-    branches: main
+    branches: [main]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -35,6 +35,8 @@ jobs:
         uses: actions/configure-pages@v2
 
       - name: Install Node.js dependencies
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
 
       - name: Build with 11ty
