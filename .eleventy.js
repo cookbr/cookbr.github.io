@@ -1,5 +1,5 @@
-import eleventyNavigationPlugin from "@11ty/eleventy-navigation";
+const eleventyNavigationPlugin = require("@11ty/eleventy-navigation");
 
-export default function (eleventyConfig) {
+module.exports = function (eleventyConfig) {
   eleventyConfig.addPlugin(eleventyNavigationPlugin);
-}
+};
