@@ -1,0 +1,25 @@
+{
+  "name": "bryancook-dev",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "npx @11ty/eleventy",
+    "serve": "npx @11ty/eleventy --serve",
+    "watch": "npx @11ty/eleventy --watch",
+    "debug": "DEBUG=* npx @11ty/eleventy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/cookbr/cookbr.github.io.git"
+  },
+  "author": {
+    "name": "Bryan Cook",
+    "url": "https://bryancook.dev/"
+  },
+  "bugs": {
+    "url": "https://github.com/cookbr/cookbr.github.io/issues"
+  },
+  "homepage": "https://github.com/cookbr/cookbr.github.io#readme",
+  "devDependencies": {
+    "@11ty/eleventy": "1.0.2"
+  }
+}
