@@ -1,4 +1,6 @@
 # Reference: https://github.com/actions/starter-workflows/blob/main/pages/static.yml
+#            https://github.com/actions/starter-workflows/blob/main/pages/hugo.yml
+name: Deploy 11ty Site to GitHub Pages
 
 on:
   # Runs on pushes targeting the default branch
@@ -19,37 +21,48 @@ concurrency:
   group: "pages"
   cancel-in-progress: true
 
+# Default to bash
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: latest
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v2
+
+      - name: Install Node.js dependencies
+        run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
+
+      - name: Build with 11ty
+        run: npm run build -- --pathprefix=${{ steps.pages.outputs.base_path }}
+
+      # Default value for `path` is `_site/`
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v1
+
+  deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [latest]
+    needs: build
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - run: |
-          npm ci
-          npm run build
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v2
-
-        # Default value for `path` is `_site/`
-      - name: Upload Artifact
-        uses: actions/upload-pages-artifact@v1
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
