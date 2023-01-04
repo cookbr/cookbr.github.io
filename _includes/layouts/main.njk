@@ -5,15 +5,31 @@
     <meta name="description" content="{{ description or metadata.description }}">
     <meta name="generator" content="{{ eleventy.generator }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:description" content="{{ description or metadata.description }}" />
-    <meta property="og:title" content="{{ title or metadata.title }}" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="{{ page.url | absoluteUrl(metadata.url) }}" />
+    <meta property="og:description" content="{{ description or metadata.description }}"/>
+    <meta property="og:title" content="{{ title or metadata.title }}"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="{{ page.url | absoluteUrl(metadata.url) }}"/>
     <title>{{ title or metadata.title }}</title>
+
+    <link rel="stylesheet" href="{{ '/css/main.css' | url }}">
   </head>
   <body>
     <header>
-      <nav>{{ collections.all | eleventyNavigation | eleventyNavigationToHtml | safe }}</nav>
+      <nav class="navbar">
+        <div>Bryan Cook</div>
+        {% set navPages = collections.all | eleventyNavigation %}
+        <ul>
+          <input type="checkbox" id="nav-items-toggle"/>
+          <label for="nav-items-toggle" class="hamburger">&#9776;</label>
+          <div class="nav-items-container">
+            {%- for entry in navPages %}
+              <li{% if entry.url == page.url %} class="my-active-class"{% endif %}>
+                <a href="{{ entry.url }}">{{ entry.title }}</a>
+              </li>
+            {%- endfor %}
+          </div>
+        </ul>
+      </nav>
     </header>
     <main>
       {{ content | safe }}
