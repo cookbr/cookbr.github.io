@@ -11,7 +11,7 @@ env:
 # See: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token
 # "Modify default permissions for GITHUB_TOKEN"
 permissions:
-  # "Work with the contents of the repository. For example, contents: read permits an action to list the 
+  # "Work with the contents of the repository. For example, contents: read permits an action to list the
   #  commits, and contents: write allows the action to create a release."
   contents: read
   # "Work with GitHub Pages. For example, pages: write permits an action to request a GitHub Pages build."
@@ -34,13 +34,13 @@ jobs:
       - name: Checkout Quartz v4 (jackyzha0/quartz)
         uses: actions/checkout@v4
         with:
-            repository: jackyzha0/quartz
-            ref: v4
-            path: ./${{ env.STAGING_DIRECTORY }}
+          repository: jackyzha0/quartz
+          ref: v4
+          path: ./${{ env.STAGING_DIRECTORY }}
 
       - name: Setup /content for Quartz
         run: |
-            cp --recursive ./content ./${{ env.STAGING_DIRECTORY }}/content
+          cp --recursive ./content/* ./${{ env.STAGING_DIRECTORY }}/content
 
       - name: Setup Node.js for Quartz
         uses: actions/setup-node@v4
