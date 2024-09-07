@@ -42,6 +42,10 @@ jobs:
         run: |
           cp --recursive ./content/* ./${{ env.STAGING_DIRECTORY }}/content
 
+      - name: Update Quartz Configuration
+        run: |
+          cat ./quartz.config.js >> ./${{ env.STAGING_DIRECTORY }}/quartz.config.ts
+
       - name: Setup Node.js for Quartz
         uses: actions/setup-node@v4
         with:
