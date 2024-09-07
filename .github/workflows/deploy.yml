@@ -1,0 +1,71 @@
+name: Build & Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  STAGING_DIRECTORY: staging
+
+# See: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token
+# "Modify default permissions for GITHUB_TOKEN"
+permissions:
+  # "Work with the contents of the repository. For example, contents: read permits an action to list the 
+  #  commits, and contents: write allows the action to create a release."
+  contents: read
+  # "Work with GitHub Pages. For example, pages: write permits an action to request a GitHub Pages build."
+  pages: write
+  # "Fetch an OpenID Connect (OIDC) token. This requires id-token: write"
+  id-token: write
+
+concurrency:
+  group: ${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (${{ github.repository }})
+        uses: actions/checkout@v4
+
+      - name: Checkout Quartz v4 (jackyzha0/quartz)
+        uses: actions/checkout@v4
+        with:
+            repository: jackyzha0/quartz
+            ref: refs/head/v4
+            path: ./$STAGING_DIRECTORY
+
+      - name: Setup /content for Quartz
+        run: |
+            cp --recursive ./content ./$STAGING_DIRECTORY/content
+
+      - name: Setup Node.js for Quartz
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ./$STAGING_DIRECTORY/.node-version
+
+      - name: npm ci (install)
+        working-directory: ./$STAGING_DIRECTORY
+        run: npm ci
+
+      - name: npx quartz build
+        working-directory: ./$STAGING_DIRECTORY
+        run: npx quartz build
+
+      - name: Upload Artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./$STAGING_DIRECTORY/public
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
