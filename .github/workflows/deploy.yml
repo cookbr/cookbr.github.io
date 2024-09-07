@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v4
         with:
             repository: jackyzha0/quartz
-            ref: refs/head/v4
+            ref: v4
             path: ./$STAGING_DIRECTORY
 
       - name: Setup /content for Quartz
