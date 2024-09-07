@@ -35,29 +35,29 @@ jobs:
         with:
             repository: jackyzha0/quartz
             ref: v4
-            path: ./$STAGING_DIRECTORY
+            path: ./${{ env.STAGING_DIRECTORY }}
 
       - name: Setup /content for Quartz
         run: |
-            cp --recursive ./content ./$STAGING_DIRECTORY/content
+            cp --recursive ./content ./${{ env.STAGING_DIRECTORY }}/content
 
       - name: Setup Node.js for Quartz
         uses: actions/setup-node@v4
         with:
-          node-version-file: ./$STAGING_DIRECTORY/.node-version
+          node-version-file: ./${{ env.STAGING_DIRECTORY }}/.node-version
 
       - name: npm ci (install)
-        working-directory: ./$STAGING_DIRECTORY
+        working-directory: ./${{ env.STAGING_DIRECTORY }}
         run: npm ci
 
       - name: npx quartz build
-        working-directory: ./$STAGING_DIRECTORY
+        working-directory: ./${{ env.STAGING_DIRECTORY }}
         run: npx quartz build
 
       - name: Upload Artifact for GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./$STAGING_DIRECTORY/public
+          path: ./${{ env.STAGING_DIRECTORY }}/public
 
   deploy:
     needs: build
