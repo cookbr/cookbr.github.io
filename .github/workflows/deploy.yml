@@ -5,9 +5,6 @@ on:
     branches:
       - main
 
-env:
-  STAGING_DIRECTORY: staging
-
 # See: https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token
 # "Modify default permissions for GITHUB_TOKEN"
 permissions:
@@ -29,49 +26,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout (${{ github.repository }})
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Checkout Quartz v4 (jackyzha0/quartz)
-        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
         with:
-          repository: jackyzha0/quartz
-          ref: v4
-          path: ./${{ env.STAGING_DIRECTORY }}
+          node-version: "latest"
+          cache: "npm"
 
-      - name: Setup /content for Quartz
-        run: |
-          cp --recursive ./content/* ./${{ env.STAGING_DIRECTORY }}/content
-
-      - name: Update Quartz Configuration
-        run: |
-          cat ./quartz.config.js >> ./${{ env.STAGING_DIRECTORY }}/quartz.config.ts
-
-      - name: Setup Node.js for Quartz
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ./${{ env.STAGING_DIRECTORY }}/.node-version
-
-      - name: npm ci (install)
-        working-directory: ./${{ env.STAGING_DIRECTORY }}
+      - name: npm ci
         run: npm ci
 
-      - name: npx quartz build
-        working-directory: ./${{ env.STAGING_DIRECTORY }}
-        run: npx quartz build
+      - name: npm run compile
+        run: npm run compile
 
       - name: Upload Artifact for GitHub Pages
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
-          path: ./${{ env.STAGING_DIRECTORY }}/public
+          path: ./_site
 
   deploy:
     name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
     needs: build
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
